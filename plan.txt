@@ -1,0 +1,203 @@
+# Portfolio Builder MVP - File Structure
+
+```
+portfolio-builder-mvp/
+├── package.json
+├── next.config.js
+├── tailwind.config.js
+├── tsconfig.json
+├── .env.local
+├── .gitignore
+├── README.md
+│
+├── public/
+│   ├── icons/
+│   │   ├── favicon.ico
+│   │   └── logo.svg
+│   ├── templates/
+│   │   ├── template-1.png
+│   │   ├── template-2.png
+│   │   ├── template-3.png
+│   │   └── template-4.png
+│   └── demo-portfolios/
+│       ├── creative/
+│       ├── developer/
+│       ├── designer/
+│       └── business/
+│
+├── src/
+│   ├── app/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx                    # Landing page
+│   │   ├── onboarding/
+│   │   │   └── page.tsx               # Personal questions form
+│   │   ├── templates/
+│   │   │   └── page.tsx               # Template selection page
+│   │   ├── builder/
+│   │   │   └── page.tsx               # Main builder playground
+│   │   └── api/
+│   │       ├── claude/
+│   │       │   └── route.ts           # Claude API integration
+│   │       ├── save-portfolio/
+│   │       │   └── route.ts           # Save portfolio data
+│   │       └── download/
+│   │           └── route.ts           # Generate & download zip
+│   │
+│   ├── components/
+│   │   ├── ui/                        # Reusable UI components
+│   │   │   ├── button.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── textarea.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── modal.tsx
+│   │   │   └── loading.tsx
+│   │   │
+│   │   ├── layout/                    # Layout components
+│   │   │   ├── header.tsx
+│   │   │   ├── footer.tsx
+│   │   │   ├── sidebar.tsx
+│   │   │   └── navigation.tsx
+│   │   │
+│   │   ├── landing/                   # Landing page components
+│   │   │   ├── hero.tsx
+│   │   │   ├── features.tsx
+│   │   │   ├── testimonials.tsx
+│   │   │   └── cta.tsx
+│   │   │
+│   │   ├── onboarding/               # Onboarding components
+│   │   │   ├── personal-info-form.tsx
+│   │   │   ├── field-selector.tsx
+│   │   │   └── progress-indicator.tsx
+│   │   │
+│   │   ├── templates/                # Template selection
+│   │   │   ├── template-grid.tsx
+│   │   │   ├── template-card.tsx
+│   │   │   ├── template-preview.tsx
+│   │   │   └── template-filters.tsx
+│   │   │
+│   │   ├── builder/                  # Builder playground
+│   │   │   ├── builder-layout.tsx    # Split pane layout
+│   │   │   ├── form-sidebar.tsx      # Left sidebar with forms
+│   │   │   ├── preview-pane.tsx      # Right pane with website
+│   │   │   ├── toolbar.tsx           # Save/download/export tools
+│   │   │   └── forms/                # Individual form components
+│   │   │       ├── personal-info.tsx
+│   │   │       ├── experience.tsx
+│   │   │       ├── education.tsx
+│   │   │       ├── skills.tsx
+│   │   │       ├── projects.tsx
+│   │   │       ├── contact.tsx
+│   │   │       └── social-links.tsx
+│   │   │
+│   │   └── portfolio/                # Generated portfolio components
+│   │       ├── portfolio-renderer.tsx
+│   │       └── iframe-sandbox.tsx
+│   │
+│   ├── lib/                          # Utility functions
+│   │   ├── claude-api.ts            # Claude API client
+│   │   ├── portfolio-generator.ts    # Portfolio generation logic
+│   │   ├── file-utils.ts            # File operations
+│   │   ├── validation.ts            # Form validation schemas
+│   │   ├── storage.ts               # Local storage utilities
+│   │   └── utils.ts                 # General utilities
+│   │
+│   ├── hooks/                        # Custom React hooks
+│   │   ├── use-portfolio-data.ts    # Portfolio data management
+│   │   ├── use-template.ts          # Template selection state
+│   │   ├── use-local-storage.ts     # Local storage hook
+│   │   └── use-debounce.ts          # Debounce hook for live updates
+│   │
+│   ├── store/                        # State management
+│   │   ├── portfolio-store.ts       # Zustand store for portfolio data
+│   │   ├── template-store.ts        # Template selection state
+│   │   └── ui-store.ts              # UI state (sidebar, modals, etc.)
+│   │
+│   ├── types/                        # TypeScript definitions
+│   │   ├── portfolio.ts             # Portfolio data types
+│   │   ├── template.ts              # Template types
+│   │   ├── form.ts                  # Form data types
+│   │   └── api.ts                   # API response types
+│   │
+│   └── templates/                    # Portfolio template definitions
+│       ├── creative/
+│       │   ├── template.ts          # Template metadata
+│       │   └── prompt.ts            # Claude prompt for this template
+│       ├── developer/
+│       │   ├── template.ts
+│       │   └── prompt.ts
+│       ├── designer/
+│       │   ├── template.ts
+│       │   └── prompt.ts
+│       └── business/
+│           ├── template.ts
+│           └── prompt.ts
+```
+
+## File Details
+
+### Core App Files
+
+**`src/app/page.tsx`** - Beautiful landing page with hero section, features, and CTA to start building
+
+**`src/app/onboarding/page.tsx`** - Multi-step form collecting personal info and field selection
+
+**`src/app/templates/page.tsx`** - Grid of template options with previews and selection
+
+**`src/app/builder/page.tsx`** - Main builder interface with split-pane layout
+
+### API Routes
+
+**`src/app/api/claude/route.ts`** - Handles Claude API calls for generating portfolio HTML/CSS/JS
+
+**`src/app/api/save-portfolio/route.ts`** - Saves portfolio data (could be local storage or DB)
+
+**`src/app/api/download/route.ts`** - Creates zip file with HTML, CSS, JS files for download
+
+### Key Components
+
+**`src/components/builder/builder-layout.tsx`** - Split pane with resizable panels
+
+**`src/components/builder/form-sidebar.tsx`** - Collapsible sidebar with form categories
+
+**`src/components/builder/preview-pane.tsx`** - Live preview of generated portfolio
+
+**`src/components/builder/forms/`** - Individual forms for each data category
+
+### Utilities & Logic
+
+**`src/lib/claude-api.ts`** - Claude API client with prompt management
+
+**`src/lib/portfolio-generator.ts`** - Logic for generating portfolio from user data and templates
+
+**`src/lib/file-utils.ts`** - File operations, zip creation, download handling
+
+### State Management
+
+**`src/store/portfolio-store.ts`** - Central state for all portfolio data using Zustand
+
+**`src/hooks/use-portfolio-data.ts`** - Custom hook for managing portfolio state
+
+### Template System
+
+**`src/templates/`** - Each template has metadata and Claude prompts for consistent generation
+
+## Key Features Implementation
+
+1. **Landing Page**: Hero section with demo, features showcase, start building CTA
+2. **Onboarding**: Progressive disclosure of personal questions and field selection
+3. **Template Selection**: Visual grid with hover previews and categorization
+4. **Builder Playground**: Real-time preview with form-driven updates
+5. **Claude Integration**: Smart prompts based on template and user data
+6. **Export System**: Clean HTML/CSS/JS generation with zip download
+
+## Tech Stack
+
+- **Next.js 14** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS** for styling
+- **Zustand** for state management
+- **React Hook Form** for form handling
+- **Claude API** for portfolio generation
+- **JSZip** for file downloads

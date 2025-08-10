@@ -6,228 +6,304 @@ import { cn } from '@/lib/utils'
 import { 
   User, 
   Briefcase, 
-  GraduationCap, 
   Code2, 
   FolderOpen, 
+  GraduationCap, 
   Mail,
-  ChevronRight,
-  ChevronDown,
+  Check,
+  Circle,
+  ChevronLeft,
   X
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 
 interface SidebarItem {
   id: string
   title: string
   icon: React.ComponentType<{ className?: string }>
-  count?: number
-  active?: boolean
   completed?: boolean
+  count?: number
+  hasData?: boolean
 }
 
 interface SidebarProps {
-  className?: string
+  activeItem: string
+  onItemSelect: (item: string) => void
+  items: SidebarItem[]
   collapsed?: boolean
   onCollapse?: () => void
-  activeItem?: string
-  onItemSelect?: (itemId: string) => void
-  items?: SidebarItem[]
+  className?: string
 }
 
-const defaultItems: SidebarItem[] = [
-  { id: 'personal', title: 'Personal Info', icon: User, completed: false },
-  { id: 'experience', title: 'Experience', icon: Briefcase, count: 0 },
-  { id: 'education', title: 'Education', icon: GraduationCap, count: 0 },
-  { id: 'skills', title: 'Skills', icon: Code2, count: 0 },
-  { id: 'projects', title: 'Projects', icon: FolderOpen, count: 0 },
-  { id: 'contact', title: 'Contact & Social', icon: Mail, completed: false }
-]
-
 export const Sidebar: React.FC<SidebarProps> = ({
-  className,
+  activeItem,
+  onItemSelect,
+  items = [],
   collapsed = false,
   onCollapse,
-  activeItem = 'personal',
-  onItemSelect,
-  items = defaultItems
+  className
 }) => {
-  const [expandedSections, setExpandedSections] = React.useState<Set<string>>(new Set(['main']))
-
-  const toggleSection = (sectionId: string) => {
-    const newExpanded = new Set(expandedSections)
-    if (newExpanded.has(sectionId)) {
-      newExpanded.delete(sectionId)
-    } else {
-      newExpanded.add(sectionId)
+  const defaultItems: SidebarItem[] = [
+    {
+      id: 'personal',
+      title: 'Personal Info',
+      icon: User,
+      completed: false,
+      hasData: false
+    },
+    {
+      id: 'experience',
+      title: 'Experience',
+      icon: Briefcase,
+      count: 0,
+      hasData: false
+    },
+    {
+      id: 'skills',
+      title: 'Skills',
+      icon: Code2,
+      count: 0,
+      hasData: false
+    },
+    {
+      id: 'projects',
+      title: 'Projects',
+      icon: FolderOpen,
+      count: 0,
+      hasData: false
+    },
+    {
+      id: 'education',
+      title: 'Education',
+      icon: GraduationCap,
+      count: 0,
+      hasData: false
+    },
+    {
+      id: 'contact',
+      title: 'Contact & Social',
+      icon: Mail,
+      completed: false,
+      hasData: false
     }
-    setExpandedSections(newExpanded)
+  ]
+
+  const sidebarItems = items.length > 0 ? items : defaultItems
+
+  const getItemStatus = (item: SidebarItem) => {
+    if (item.completed) return 'completed'
+    if (item.hasData || (item.count && item.count > 0)) return 'partial'
+    return 'empty'
+  }
+
+  const getStatusIcon = (item: SidebarItem) => {
+    const status = getItemStatus(item)
+    
+    if (status === 'completed') {
+      return <Check className="h-4 w-4 text-green-600" />
+    }
+    if (status === 'partial') {
+      return <Circle className="h-4 w-4 text-blue-600 fill-current" />
+    }
+    return <Circle className="h-4 w-4 text-gray-300" />
   }
 
   if (collapsed) {
     return (
       <div className={cn(
-        'w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 space-y-2',
+        'w-16 bg-white border-r border-gray-200 flex flex-col',
         className
       )}>
-        {items.map((item) => {
-          const Icon = item.icon
-          return (
-            <button
-              key={item.id}
-              onClick={() => onItemSelect?.(item.id)}
-              className={cn(
-                'w-10 h-10 rounded-lg flex items-center justify-center transition-colors relative',
-                activeItem === item.id
-                  ? 'bg-blue-100 text-blue-600'
-                  : 'text-gray-600 hover:bg-gray-100'
-              )}
-              title={item.title}
-            >
-              <Icon className="h-5 w-5" />
-              {item.completed && (
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-              )}
-              {typeof item.count === 'number' && item.count > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
-                  {item.count}
-                </div>
-              )}
-            </button>
-          )
-        })}
+        {/* Collapsed Header */}
+        <div className="p-4 border-b border-gray-200">
+          <button
+            onClick={onCollapse}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+            title="Expand sidebar"
+          >
+            <ChevronLeft className="h-5 w-5 text-gray-600 rotate-180" />
+          </button>
+        </div>
+
+        {/* Collapsed Navigation */}
+        <nav className="flex-1 py-4">
+          <div className="space-y-2 px-2">
+            {sidebarItems.map((item) => {
+              const Icon = item.icon
+              const isActive = activeItem === item.id
+              const status = getItemStatus(item)
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onItemSelect(item.id)}
+                  className={cn(
+                    'w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200 relative group',
+                    isActive 
+                      ? 'bg-blue-100 text-blue-700 shadow-sm' 
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  )}
+                  title={item.title}
+                >
+                  <Icon className="h-5 w-5" />
+                  
+                  {/* Status indicator */}
+                  <div className="absolute -top-1 -right-1">
+                    {status === 'completed' && (
+                      <div className="w-3 h-3 bg-green-500 rounded-full border border-white" />
+                    )}
+                    {status === 'partial' && (
+                      <div className="w-3 h-3 bg-blue-500 rounded-full border border-white" />
+                    )}
+                  </div>
+
+                  {/* Count badge */}
+                  {item.count && item.count > 0 && (
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                      {item.count > 9 ? '9+' : item.count}
+                    </div>
+                  )}
+
+                  {/* Tooltip */}
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                    {item.title}
+                    {item.count && item.count > 0 && ` (${item.count})`}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </nav>
       </div>
     )
   }
 
   return (
     <div className={cn(
-      'w-80 bg-white border-r border-gray-200 flex flex-col h-full',
+      'w-80 bg-white border-r border-gray-200 flex flex-col',
       className
     )}>
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900">Portfolio Sections</h2>
-        {onCollapse && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onCollapse}
-            className="h-8 w-8"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-2">
-          {/* Main Section */}
-          <div className="mb-4">
-            <button
-              onClick={() => toggleSection('main')}
-              className="w-full flex items-center justify-between p-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-            >
-              <span>Portfolio Information</span>
-              {expandedSections.has('main') ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </button>
-            
-            {expandedSections.has('main') && (
-              <div className="mt-2 ml-2 space-y-1">
-                {items.map((item) => {
-                  const Icon = item.icon
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => onItemSelect?.(item.id)}
-                      className={cn(
-                        'w-full flex items-center space-x-3 p-3 rounded-lg text-sm transition-colors relative',
-                        activeItem === item.id
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      )}
-                    >
-                      <Icon className={cn(
-                        'h-5 w-5 flex-shrink-0',
-                        activeItem === item.id ? 'text-blue-600' : 'text-gray-400'
-                      )} />
-                      <span className="flex-1 text-left font-medium">{item.title}</span>
-                      
-                      {/* Status indicators */}
-                      <div className="flex items-center space-x-2">
-                        {item.completed && (
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        )}
-                        {typeof item.count === 'number' && (
-                          <span className={cn(
-                            'text-xs px-2 py-1 rounded-full',
-                            item.count > 0
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'bg-gray-100 text-gray-500'
-                          )}>
-                            {item.count}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
+      {/* Expanded Header */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Portfolio Sections</h2>
+            <p className="text-sm text-gray-600 mt-1">Complete each section to build your portfolio</p>
           </div>
+          {onCollapse && (
+            <button
+              onClick={onCollapse}
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
+              title="Close sidebar"
+            >
+              <X className="h-5 w-5 text-gray-600" />
+            </button>
+          )}
+        </div>
 
-          {/* Progress Section */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">Completion Progress</h3>
-            <div className="space-y-2">
-              {items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between text-xs">
-                  <span className="text-gray-600">{item.title}</span>
-                  <div className="flex items-center space-x-2">
-                    {item.completed ? (
-                      <span className="text-green-600 font-medium">✓ Complete</span>
-                    ) : typeof item.count === 'number' && item.count > 0 ? (
-                      <span className="text-blue-600 font-medium">{item.count} items</span>
-                    ) : (
-                      <span className="text-gray-400">Empty</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-4 pt-3 border-t border-gray-200">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Overall</span>
-                <span className="font-medium text-gray-900">
-                  {Math.round((items.filter(item => 
-                    item.completed || (typeof item.count === 'number' && item.count > 0)
-                  ).length / items.length) * 100)}%
-                </span>
-              </div>
-              <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${(items.filter(item => 
-                      item.completed || (typeof item.count === 'number' && item.count > 0)
-                    ).length / items.length) * 100}%` 
-                  }}
-                ></div>
-              </div>
-            </div>
+        {/* Progress Overview */}
+        <div className="mt-4 bg-gray-50 rounded-lg p-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-700">Overall Progress</span>
+            <span className="font-medium text-gray-900">
+              {sidebarItems.filter(item => getItemStatus(item) !== 'empty').length} / {sidebarItems.length}
+            </span>
+          </div>
+          <div className="mt-2 bg-white rounded-full h-2">
+            <div 
+              className="h-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-500"
+              style={{ 
+                width: `${(sidebarItems.filter(item => getItemStatus(item) !== 'empty').length / sidebarItems.length) * 100}%` 
+              }}
+            />
           </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
-        <div className="text-xs text-gray-500 text-center">
-          Fill out all sections for the best portfolio results
+      {/* Expanded Navigation */}
+      <nav className="flex-1 py-4">
+        <div className="space-y-1 px-4">
+          {sidebarItems.map((item) => {
+            const Icon = item.icon
+            const isActive = activeItem === item.id
+            const status = getItemStatus(item)
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => onItemSelect(item.id)}
+                className={cn(
+                  'w-full flex items-center px-4 py-3 rounded-lg text-left transition-all duration-200 group',
+                  isActive 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                )}
+              >
+                {/* Icon */}
+                <div className="flex-shrink-0 mr-3">
+                  <Icon className={cn(
+                    'h-5 w-5 transition-colors',
+                    isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'
+                  )} />
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium truncate">
+                      {item.title}
+                    </span>
+                    
+                    <div className="flex items-center space-x-2 ml-2">
+                      {/* Count badge */}
+                      {item.count !== undefined && (
+                        <span className={cn(
+                          'px-2 py-0.5 text-xs font-medium rounded-full',
+                          item.count > 0
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-gray-100 text-gray-500'
+                        )}>
+                          {item.count}
+                        </span>
+                      )}
+                      
+                      {/* Status indicator */}
+                      {getStatusIcon(item)}
+                    </div>
+                  </div>
+                  
+                  {/* Subtitle */}
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    {status === 'completed' && 'Complete'}
+                    {status === 'partial' && item.count && `${item.count} item${item.count === 1 ? '' : 's'} added`}
+                    {status === 'partial' && !item.count && 'In progress'}
+                    {status === 'empty' && 'Not started'}
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      </nav>
+
+      {/* Quick Actions */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="text-xs text-gray-500 mb-2">Quick Actions</div>
+        <div className="space-y-1">
+          <button
+            onClick={() => {
+              const nextEmpty = sidebarItems.find(item => getItemStatus(item) === 'empty')
+              if (nextEmpty) onItemSelect(nextEmpty.id)
+            }}
+            className="w-full text-left text-xs text-blue-600 hover:text-blue-700 p-2 rounded hover:bg-blue-50 transition-colors"
+          >
+            → Complete next section
+          </button>
+          <button
+            onClick={() => onItemSelect('personal')}
+            className="w-full text-left text-xs text-gray-600 hover:text-gray-700 p-2 rounded hover:bg-gray-50 transition-colors"
+          >
+            ↻ Review personal info
+          </button>
         </div>
       </div>
     </div>

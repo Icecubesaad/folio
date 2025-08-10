@@ -1,7 +1,7 @@
 // src/components/builder/builder-layout.tsx
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Monitor, Tablet, Smartphone, PanelLeft, PanelRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FormSidebar } from './form-sidebar'
@@ -21,16 +21,75 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop')
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
-  const { isGenerating, generatePortfolio } = usePortfolioData()
+  const [sidebarWidth, setSidebarWidth] = useState(400) // Default width in pixels
+  const [isResizing, setIsResizing] = useState(false)
+  
+  const { isGenerating, forceRegenerate } = usePortfolioData()
+  const resizeRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Sidebar width constraints
+  const MIN_SIDEBAR_WIDTH = 320
+  const MAX_SIDEBAR_WIDTH = 800
 
-  // Auto-generate portfolio when data changes
+  // Handle mouse resize
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsResizing(true)
+
+    const startX = e.clientX
+    const startWidth = sidebarWidth
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - startX
+      const newWidth = Math.min(
+        Math.max(startWidth + deltaX, MIN_SIDEBAR_WIDTH),
+        MAX_SIDEBAR_WIDTH
+      )
+      setSidebarWidth(newWidth)
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+  }, [sidebarWidth])
+
+  // Handle wheel resize on the resize handle
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (!resizeRef.current) return
+    
+    const rect = resizeRef.current.getBoundingClientRect()
+    const isOverHandle = (
+      e.clientX >= rect.left && 
+      e.clientX <= rect.right && 
+      e.clientY >= rect.top && 
+      e.clientY <= rect.bottom
+    )
+
+    if (isOverHandle) {
+      e.preventDefault()
+      const delta = e.deltaY > 0 ? -20 : 20 // Invert for natural feel
+      const newWidth = Math.min(
+        Math.max(sidebarWidth + delta, MIN_SIDEBAR_WIDTH),
+        MAX_SIDEBAR_WIDTH
+      )
+      setSidebarWidth(newWidth)
+    }
+  }, [sidebarWidth])
+
+  // Add wheel event listener
   useEffect(() => {
-    const timer = setTimeout(() => {
-      generatePortfolio()
-    }, 1000) // Debounce generation
-
-    return () => clearTimeout(timer)
-  }, [generatePortfolio])
+    const container = containerRef.current
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false })
+      return () => container.removeEventListener('wheel', handleWheel)
+    }
+  }, [handleWheel])
 
   // Handle responsive behavior
   useEffect(() => {
@@ -49,27 +108,26 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
   }, [])
 
   const handleSave = async () => {
-    // Implement save logic
     console.log('Saving portfolio...')
   }
 
   const handleDownload = async () => {
-    // Implement download logic
     console.log('Downloading portfolio...')
   }
 
   const handlePreview = () => {
-    // Open preview in new window
-    console.log('Opening preview...')
+    window.open(window.location.href, '_blank')
   }
 
   const handleShare = () => {
-    // Implement share logic
     console.log('Sharing portfolio...')
   }
 
   return (
-    <div className={cn('h-screen flex flex-col bg-gray-50', className)}>
+    <div 
+      ref={containerRef}
+      className={cn('h-screen flex flex-col bg-gray-50', className)}
+    >
       {/* Toolbar */}
       <Toolbar
         isGenerating={isGenerating}
@@ -80,65 +138,67 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
       />
 
       {/* Device Mode Selector */}
-      <div className="bg-white border-b border-gray-200 px-4 py-2">
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-1">
-            <Button
-              variant={previewMode === 'desktop' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setPreviewMode('desktop')}
-              className="flex items-center space-x-2"
-            >
-              <Monitor className="h-4 w-4" />
-              <span className="hidden sm:inline">Desktop</span>
-            </Button>
-            <Button
-              variant={previewMode === 'tablet' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setPreviewMode('tablet')}
-              className="flex items-center space-x-2"
-            >
-              <Tablet className="h-4 w-4" />
-              <span className="hidden sm:inline">Tablet</span>
-            </Button>
-            <Button
-              variant={previewMode === 'mobile' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => setPreviewMode('mobile')}
-              className="flex items-center space-x-2"
-            >
-              <Smartphone className="h-4 w-4" />
-              <span className="hidden sm:inline">Mobile</span>
-            </Button>
+            {[
+              { mode: 'desktop' as const, label: 'Desktop', icon: Monitor },
+              { mode: 'tablet' as const, label: 'Tablet', icon: Tablet },
+              { mode: 'mobile' as const, label: 'Mobile', icon: Smartphone }
+            ].map((option) => {
+              const Icon = option.icon
+              return (
+                <Button
+                  key={option.mode}
+                  variant={previewMode === option.mode ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setPreviewMode(option.mode)}
+                  className="flex items-center space-x-2"
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{option.label}</span>
+                </Button>
+              )
+            })}
           </div>
 
-          {/* Sidebar Toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              if (window.innerWidth < 1024) {
-                setShowMobileSidebar(!showMobileSidebar)
-              } else {
-                setSidebarCollapsed(!sidebarCollapsed)
-              }
-            }}
-            className="flex items-center space-x-2"
-          >
-            {sidebarCollapsed || showMobileSidebar ? (
-              <PanelRight className="h-4 w-4" />
-            ) : (
-              <PanelLeft className="h-4 w-4" />
+          {/* Sidebar Controls */}
+          <div className="flex items-center space-x-2">
+            {/* Width indicator (desktop only) */}
+            {!sidebarCollapsed && (
+              <div className="hidden lg:flex items-center space-x-2 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                <span>Form width: {sidebarWidth}px</span>
+              </div>
             )}
-            <span className="hidden sm:inline">
-              {sidebarCollapsed ? 'Show Forms' : 'Hide Forms'}
-            </span>
-          </Button>
+
+            {/* Sidebar Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                if (window.innerWidth < 1024) {
+                  setShowMobileSidebar(!showMobileSidebar)
+                } else {
+                  setSidebarCollapsed(!sidebarCollapsed)
+                }
+              }}
+              className="flex items-center space-x-2"
+            >
+              {sidebarCollapsed || showMobileSidebar ? (
+                <PanelRight className="h-4 w-4" />
+              ) : (
+                <PanelLeft className="h-4 w-4" />
+              )}
+              <span className="hidden sm:inline">
+                {sidebarCollapsed ? 'Show Forms' : 'Hide Forms'}
+              </span>
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
         {/* Mobile Sidebar Overlay */}
         {showMobileSidebar && (
           <div
@@ -150,13 +210,14 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
         {/* Form Sidebar */}
         <div
           className={cn(
-            'transition-all duration-300 ease-in-out bg-white border-r border-gray-200',
+            'transition-all duration-300 ease-in-out bg-white border-r border-gray-200 relative',
             // Desktop behavior
             'hidden lg:block',
-            sidebarCollapsed ? 'lg:w-0 lg:overflow-hidden' : 'lg:w-1/2 xl:w-2/5',
+            sidebarCollapsed ? 'lg:w-0 lg:overflow-hidden' : '',
             // Mobile behavior
             showMobileSidebar && 'fixed inset-y-0 left-0 z-50 w-full max-w-md block lg:hidden'
           )}
+          style={!sidebarCollapsed ? { width: `${sidebarWidth}px` } : {}}
         >
           <FormSidebar
             activeForm={activeForm}
@@ -169,6 +230,29 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
               }
             }}
           />
+
+          {/* Resize Handle - Desktop Only */}
+          {!sidebarCollapsed && (
+            <div
+              ref={resizeRef}
+              onMouseDown={handleMouseDown}
+              className={cn(
+                'absolute top-0 right-0 w-1 h-full cursor-col-resize bg-transparent hover:bg-blue-500 transition-colors z-10 hidden lg:block group',
+                isResizing && 'bg-blue-500'
+              )}
+              title="Drag to resize or scroll to adjust width"
+            >
+              {/* Visual indicator */}
+              <div className="absolute inset-y-0 right-0 w-1 bg-gray-300 group-hover:bg-blue-500 transition-colors" />
+              
+              {/* Resize tooltip */}
+              <div className="absolute top-1/2 -translate-y-1/2 left-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                  Drag or scroll to resize
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Preview Pane */}
@@ -179,6 +263,16 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
             onExpand={() => setShowMobileSidebar(true)}
           />
         </div>
+
+        {/* Resize indicator overlay */}
+        {isResizing && (
+          <div className="fixed inset-0 bg-black bg-opacity-10 z-50 flex items-center justify-center pointer-events-none">
+            <div className="bg-white px-4 py-2 rounded-lg shadow-lg">
+              <div className="text-lg font-medium text-gray-900">{sidebarWidth}px</div>
+              <div className="text-sm text-gray-600">Form panel width</div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Mobile Form Navigation */}
@@ -199,36 +293,10 @@ export const BuilderLayout: React.FC<BuilderLayoutProps> = ({ className }) => {
         </div>
       )}
 
-      {/* Resizer Handle */}
-      {!sidebarCollapsed && (
-        <div
-          className="hidden lg:block absolute left-1/2 xl:left-2/5 top-20 bottom-0 w-1 bg-gray-300 hover:bg-blue-500 cursor-col-resize z-30 transition-colors"
-          onMouseDown={(e) => {
-            e.preventDefault()
-            const startX = e.clientX
-            const startWidth = document.querySelector('.form-sidebar')?.clientWidth || 0
-
-            const handleMouseMove = (e: MouseEvent) => {
-              const newWidth = Math.min(
-                Math.max(startWidth + (e.clientX - startX), 320),
-                window.innerWidth * 0.7
-              )
-              const sidebar = document.querySelector('.form-sidebar') as HTMLElement
-              if (sidebar) {
-                sidebar.style.width = `${newWidth}px`
-              }
-            }
-
-            const handleMouseUp = () => {
-              document.removeEventListener('mousemove', handleMouseMove)
-              document.removeEventListener('mouseup', handleMouseUp)
-            }
-
-            document.addEventListener('mousemove', handleMouseMove)
-            document.addEventListener('mouseup', handleMouseUp)
-          }}
-        />
-      )}
+      {/* Keyboard shortcuts hint */}
+      <div className="hidden lg:block fixed bottom-4 right-4 text-xs text-gray-400 bg-white px-2 py-1 rounded shadow-sm">
+        <div>💡 Hover resize handle and scroll to adjust width</div>
+      </div>
     </div>
   )
 }

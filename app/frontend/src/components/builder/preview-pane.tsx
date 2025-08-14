@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react'
 import { Monitor, Tablet, Smartphone, RotateCcw, ExternalLink, Eye, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PortfolioRenderer } from '@/components/portfolio/portfolio-renderer'
+import { PortfolioRenderer } from '@/components/portfolio/portfolio_renderer'
 import { usePortfolioStore } from '@/store/portfolio-store'
 import { useTemplateStore } from '@/store/template-store'
 import { cn } from '@/lib/utils'

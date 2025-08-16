@@ -1,263 +1,128 @@
-// src/components/builder/forms/personal-info.tsx
-'use client'
+import React, { useState } from 'react'
+import { User } from 'lucide-react'
 
-import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { User, Mail, Phone, MapPin, FileText } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { usePortfolioStore } from '@/store/portfolio-store'
-import { useDebounce } from '@/hooks/use-debounce'
+const PersonalInfoForm = ({ personalInfo, updatePersonalInfo }) => {
+  const [formData, setFormData] = useState(personalInfo)
 
-interface PersonalInfoFormData {
-  fullName: string
-  professionalTitle: string
-  email: string
-  phone?: string
-  location?: string
-  bio?: string
-}
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
 
-export const PersonalInfoForm: React.FC = () => {
-  const { personalInfo, setPersonalInfo } = usePortfolioStore()
-  
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    setValue
-  } = useForm<PersonalInfoFormData>({
-    defaultValues: {
-      fullName: personalInfo?.fullName || '',
-      professionalTitle: personalInfo?.professionalTitle || '',
-      email: personalInfo?.email || '',
-      phone: personalInfo?.phone || '',
-      location: personalInfo?.location || '',
-      bio: personalInfo?.bio || ''
+  const handleKeyPress = (field, e) => {
+    if (e.key === 'Enter') {
+      updatePersonalInfo({ [field]: formData[field] })
     }
-  })
+  }
 
-  const watchedValues = watch()
-  const debouncedValues = useDebounce(watchedValues, 500)
-
-  // Auto-save on change
-  useEffect(() => {
-    if (debouncedValues.fullName && debouncedValues.email && debouncedValues.professionalTitle) {
-      setPersonalInfo({
-        fullName: debouncedValues.fullName,
-        professionalTitle: debouncedValues.professionalTitle,
-        email: debouncedValues.email,
-        phone: debouncedValues.phone || '',
-        location: debouncedValues.location || '',
-        bio: debouncedValues.bio || ''
-      })
-    }
-  }, [debouncedValues, setPersonalInfo])
-
-  // Set initial values when personalInfo exists
-  useEffect(() => {
-    if (personalInfo) {
-      setValue('fullName', personalInfo.fullName || '')
-      setValue('professionalTitle', personalInfo.professionalTitle || '')
-      setValue('email', personalInfo.email || '')
-      setValue('phone', personalInfo.phone || '')
-      setValue('location', personalInfo.location || '')
-      setValue('bio', personalInfo.bio || '')
-    }
-  }, [personalInfo, setValue])
-
-  const onSubmit = (data: PersonalInfoFormData) => {
-    setPersonalInfo(data)
+  const handleBlur = (field) => {
+    updatePersonalInfo({ [field]: formData[field] })
   }
 
   return (
     <div className="space-y-6">
-      <Card className="p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          
-          {/* Basic Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <User className="h-5 w-5 mr-2 text-blue-600" />
-              Basic Information
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <Input
-                  {...register('fullName', { required: 'Full name is required' })}
-                  placeholder="John Doe"
-                  error={!!errors.fullName}
-                />
-                {errors.fullName && (
-                  <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Professional Title *
-                </label>
-                <Input
-                  {...register('professionalTitle', { required: 'Professional title is required' })}
-                  placeholder="Frontend Developer"
-                  error={!!errors.professionalTitle}
-                />
-                {errors.professionalTitle && (
-                  <p className="text-red-500 text-xs mt-1">{errors.professionalTitle.message}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <Mail className="h-5 w-5 mr-2 text-blue-600" />
-              Contact Information
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
-                </label>
-                <Input
-                  {...register('email', { 
-                    required: 'Email is required',
-                    pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
-                  })}
-                  type="email"
-                  placeholder="john@example.com"
-                  error={!!errors.email}
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
-                <Input
-                  {...register('phone')}
-                  type="tel"
-                  placeholder="+1 (555) 123-4567"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location
-                </label>
-                <Input
-                  {...register('location')}
-                  placeholder="San Francisco, CA"
-                />
-                <p className="text-gray-500 text-xs mt-1">
-                  City, State/Country or Remote
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Professional Bio */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <FileText className="h-5 w-5 mr-2 text-blue-600" />
-              Professional Bio
-            </h3>
-            
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <User className="h-5 w-5 mr-2 text-blue-600" />
+          Personal Information
+        </h3>
+        
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                About You
-              </label>
-              <Textarea
-                {...register('bio')}
-                rows={4}
-                placeholder="Tell potential employers or clients about yourself. What drives you? What are your key strengths? What makes you unique in your field?"
-                className="resize-none"
+              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+              <input
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => handleChange('fullName', e.target.value)}
+                onKeyPress={(e) => handleKeyPress('fullName', e)}
+                onBlur={() => handleBlur('fullName')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="John Doe"
               />
-              <p className="text-gray-500 text-xs mt-1">
-                This will appear in your portfolio's about section. Keep it engaging and professional.
-              </p>
             </div>
-          </div>
-
-          {/* Form Actions */}
-          <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-            <div className="text-sm text-gray-600">
-              {watchedValues.fullName && watchedValues.email && watchedValues.professionalTitle ? (
-                <span className="text-green-600">✓ Auto-saved</span>
-              ) : (
-                <span>Fill required fields to auto-save</span>
-              )}
-            </div>
-            
-            <Button type="submit" disabled={!watchedValues.fullName || !watchedValues.email}>
-              Update Information
-            </Button>
-          </div>
-        </form>
-      </Card>
-
-      {/* Preview Card */}
-      {personalInfo?.fullName && (
-        <Card className="p-6 bg-blue-50 border-blue-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Preview</h3>
-          <div className="space-y-3">
             <div>
-              <h4 className="text-xl font-bold text-gray-900">{personalInfo.fullName}</h4>
-              <p className="text-blue-600 font-medium">{personalInfo.professionalTitle}</p>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Professional Title *</label>
+              <input
+                type="text"
+                value={formData.professionalTitle}
+                onChange={(e) => handleChange('professionalTitle', e.target.value)}
+                onKeyPress={(e) => handleKeyPress('professionalTitle', e)}
+                onBlur={() => handleBlur('professionalTitle')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Full-Stack Developer"
+              />
             </div>
-            
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              {personalInfo.email && (
-                <span className="flex items-center">
-                  <Mail className="h-4 w-4 mr-1" />
-                  {personalInfo.email}
-                </span>
-              )}
-              {personalInfo.phone && (
-                <span className="flex items-center">
-                  <Phone className="h-4 w-4 mr-1" />
-                  {personalInfo.phone}
-                </span>
-              )}
-              {personalInfo.location && (
-                <span className="flex items-center">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {personalInfo.location}
-                </span>
-              )}
-            </div>
-            
-            {personalInfo.bio && (
-              <p className="text-gray-700 text-sm leading-relaxed">
-                {personalInfo.bio}
-              </p>
-            )}
           </div>
-        </Card>
-      )}
-
-      {/* Tips Card */}
-      <Card className="p-6 bg-gray-50">
-        <h3 className="text-lg font-medium text-gray-900 mb-3">💡 Tips for a Great Profile</h3>
-        <ul className="space-y-2 text-sm text-gray-600">
-          <li>• Use your full professional name as it appears on LinkedIn</li>
-          <li>• Your title should clearly describe what you do (e.g., Senior Frontend Developer)</li>
-          <li>• Write your bio in first person and keep it concise but engaging</li>
-          <li>• Include location if you're open to local opportunities, or mention Remote if applicable</li>
-        </ul>
-      </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                onKeyPress={(e) => handleKeyPress('email', e)}
+                onBlur={() => handleBlur('email')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="john@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                onKeyPress={(e) => handleKeyPress('phone', e)}
+                onBlur={() => handleBlur('phone')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="+1 (555) 123-4567"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={(e) => handleChange('location', e.target.value)}
+              onKeyPress={(e) => handleKeyPress('location', e)}
+              onBlur={() => handleBlur('location')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="San Francisco, CA"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
+            <input
+              type="url"
+              value={formData.website || ''}
+              onChange={(e) => handleChange('website', e.target.value)}
+              onKeyPress={(e) => handleKeyPress('website', e)}
+              onBlur={() => handleBlur('website')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="https://johndoe.dev"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => handleChange('bio', e.target.value)}
+              onKeyPress={(e) => handleKeyPress('bio', e)}
+              onBlur={() => handleBlur('bio')}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              placeholder="Tell us about yourself..."
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
+
+export default PersonalInfoForm

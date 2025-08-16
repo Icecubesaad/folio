@@ -1,257 +1,198 @@
-// src/components/builder/forms/education.tsx
-'use client'
+import React, { useState } from 'react'
+import { 
+  GraduationCap, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Calendar, 
+  School, 
+  X 
+} from 'lucide-react'
 
-import React, { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { GraduationCap, Plus, Edit, Trash2, Calendar, School } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Modal } from '@/components/ui/modal'
-import { usePortfolioStore } from '@/store/portfolio-store'
-
-interface EducationFormData {
-  school: string
-  degree: string
-  year: string
-  details?: string
-}
-
-export const EducationForm: React.FC = () => {
-  const { education, addEducation, updateEducation, removeEducation } = usePortfolioStore()
+const EducationForm = ({ education, addEducation, updateEducation, removeEducation }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState(null)
+  const [formData, setFormData] = useState({
+    degree: '',
+    school: '',
+    year: '',
+    details: ''
+  })
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue
-  } = useForm<EducationFormData>()
-
-  const openAddModal = () => {
-    reset()
-    setEditingId(null)
+  const openModal = (edu = null) => {
+    if (edu) {
+      setFormData(edu)
+      setEditingId(edu.id)
+    } else {
+      setFormData({
+        degree: '',
+        school: '',
+        year: '',
+        details: ''
+      })
+      setEditingId(null)
+    }
     setIsModalOpen(true)
   }
 
-  const openEditModal = (id: string) => {
-    const edu = education.find(e => e.id === id)
-    if (edu) {
-      setValue('school', edu.school)
-      setValue('degree', edu.degree)
-      setValue('year', edu.year)
-      setValue('details', edu.details || '')
-      setEditingId(id)
-      setIsModalOpen(true)
-    }
-  }
-
-  const onSubmit = (data: EducationFormData) => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     if (editingId) {
-      updateEducation(editingId, data)
+      updateEducation(editingId, formData)
     } else {
-      addEducation(data)
+      addEducation(formData)
     }
     setIsModalOpen(false)
-    reset()
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this education entry?')) {
-      removeEducation(id)
-    }
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-    setEditingId(null)
-    reset()
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-medium text-gray-900">Education</h3>
-          <p className="text-sm text-gray-600">Add your educational background and qualifications</p>
-        </div>
-        <Button
-          onClick={openAddModal}
-          className="flex items-center space-x-2"
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <GraduationCap className="h-5 w-5 mr-2 text-blue-600" />
+          Education
+        </h3>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           <span>Add Education</span>
-        </Button>
+        </button>
       </div>
 
-      {/* Education List */}
+      {/* Education Cards */}
       <div className="space-y-4">
-        {education.length === 0 ? (
-          <Card className="p-8 text-center bg-gray-50">
-            <GraduationCap className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Education Added Yet</h3>
-            <p className="text-gray-600 mb-4">
-              Add your educational background, degrees, and certifications
-            </p>
-            <Button onClick={openAddModal} variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Your Education
-            </Button>
-          </Card>
-        ) : (
-          education.map((edu) => (
-            <Card key={edu.id} className="p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <School className="h-5 w-5 text-gray-400" />
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-900">{edu.degree}</h4>
-                      <p className="text-blue-600 font-medium">{edu.school}</p>
-                    </div>
+        {education.map((edu) => (
+          <div key={edu.id} className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-2">
+                  <School className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900">{edu.degree}</h4>
+                    <p className="text-blue-600 font-medium">{edu.school}</p>
                   </div>
-                  
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Calendar className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">{edu.year}</span>
-                  </div>
-                  
-                  {edu.details && (
-                    <p className="text-gray-700 text-sm leading-relaxed">
-                      {edu.details}
-                    </p>
-                  )}
                 </div>
                 
-                <div className="flex items-center space-x-2 ml-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => openEditModal(edu.id)}
-                    className="hover:bg-blue-50 hover:text-blue-600"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(edu.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                <div className="flex items-center space-x-2 mb-3">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">{edu.year}</span>
                 </div>
+                
+                {edu.details && (
+                  <p className="text-gray-700 text-sm leading-relaxed">{edu.details}</p>
+                )}
               </div>
-            </Card>
-          ))
-        )}
+              
+              <div className="flex items-center space-x-2 ml-4">
+                <button
+                  onClick={() => openModal(edu)}
+                  className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeEducation(edu.id)}
+                  className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Add/Edit Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        title={editingId ? 'Edit Education' : 'Add Education'}
-        size="lg"
-      >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Degree/Qualification *
-              </label>
-              <Input
-                {...register('degree', { required: 'Degree is required' })}
-                placeholder="Bachelor of Science in Computer Science"
-                error={!!errors.degree}
-              />
-              {errors.degree && (
-                <p className="text-red-500 text-xs mt-1">{errors.degree.message}</p>
-              )}
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">
+                  {editingId ? 'Edit Education' : 'Add Education'}
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Degree *</label>
+                    <input
+                      type="text"
+                      value={formData.degree}
+                      onChange={(e) => setFormData({...formData, degree: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Bachelor of Science in Computer Science"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Institution *</label>
+                    <input
+                      type="text"
+                      value={formData.school}
+                      onChange={(e) => setFormData({...formData, school: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="University of California, Berkeley"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Year of Graduation *</label>
+                  <input
+                    type="text"
+                    value={formData.year}
+                    onChange={(e) => setFormData({...formData, year: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="2023"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
+                  <textarea
+                    value={formData.details}
+                    onChange={(e) => setFormData({...formData, details: e.target.value})}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                    placeholder="GPA, honors, relevant coursework..."
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {editingId ? 'Update' : 'Add'} Education
+                  </button>
+                </div>
+              </form>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Institution *
-              </label>
-              <Input
-                {...register('school', { required: 'Institution is required' })}
-                placeholder="University of California, Berkeley"
-                error={!!errors.school}
-              />
-              {errors.school && (
-                <p className="text-red-500 text-xs mt-1">{errors.school.message}</p>
-              )}
-            </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Year of Graduation *
-            </label>
-            <Input
-              {...register('year', { 
-                required: 'Year is required',
-                pattern: {
-                  value: /^\d{4}$/,
-                  message: 'Please enter a valid 4-digit year'
-                }
-              })}
-              placeholder="2023"
-              error={!!errors.year}
-            />
-            {errors.year && (
-              <p className="text-red-500 text-xs mt-1">{errors.year.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Additional Details
-            </label>
-            <Textarea
-              {...register('details')}
-              rows={4}
-              placeholder="GPA, honors, relevant coursework, thesis topic, etc."
-              className="resize-none"
-            />
-            <p className="text-gray-500 text-xs mt-1">
-              Include any relevant details like GPA, honors, or coursework
-            </p>
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={closeModal}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">
-              {editingId ? 'Update Education' : 'Add Education'}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* Tips */}
-      {education.length > 0 && (
-        <Card className="p-4 bg-indigo-50 border-indigo-200">
-          <h4 className="font-medium text-indigo-900 mb-2">💡 Tips for Education Entries</h4>
-          <ul className="text-sm text-indigo-800 space-y-1">
-            <li>• List education in reverse chronological order (most recent first)</li>
-            <li>• Include relevant certifications and online courses</li>
-            <li>• Mention honors, awards, or high GPA if relevant (3.5+)</li>
-            <li>• For recent graduates, include relevant coursework</li>
-            <li>• Add thesis or capstone project topics if applicable</li>
-          </ul>
-        </Card>
+        </div>
       )}
     </div>
   )
 }
+
+export default EducationForm

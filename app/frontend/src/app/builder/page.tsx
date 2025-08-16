@@ -24,106 +24,1431 @@ import {
   Linkedin,
   Twitter,
   X,
-  ChevronLeft
+  ChevronLeft,
+  Plus,
+  Edit,
+  Trash2,
+  Calendar,
+  Building,
+  School,
+  Star,
+  TrendingUp,
+  ExternalLink,
+  Upload,
+  Image as ImageIcon,
+  Check,
+  AlertCircle,
+  Loader
 } from 'lucide-react'
-import { PersonalInfoForm } from '@/components/builder/forms/personal-info'
-import { EducationForm } from '@/components/builder/forms/education'
-import { ContactForm } from '@/components/builder/forms/contact'
-import { ProjectsForm } from '@/components/builder/forms/projects'
-import { SkillsForm } from '@/components/builder/forms/skills'
-import { ExperienceForm } from '@/components/builder/forms/experience'
-// Mock stores (replace with your actual stores)
-const usePortfolioStore = () => ({
-  personalInfo: {
-    fullName: "John Doe",
-    professionalTitle: "Full-Stack Developer",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    location: "San Francisco, CA",
-    website: "johndoe.dev",
-    bio: "Passionate full-stack developer with 5+ years of experience creating scalable web applications. I love turning complex problems into simple, beautiful solutions that users enjoy.",
-    profileImage: "/api/placeholder/200/200"
-  },
-  experience: [
-    {
-      id: 1,
-      position: "Senior Full-Stack Developer",
-      company: "TechCorp Solutions",
-      location: "San Francisco, CA",
-      startDate: "2022-01",
-      endDate: null,
-      current: true,
-      description: "Led development of microservices architecture serving 1M+ users. Built React frontends and Node.js backends, improved performance by 40%."
-    },
-    {
-      id: 2,
-      position: "Frontend Developer",
-      company: "StartupXYZ",
-      location: "Remote",
-      startDate: "2020-06",
-      endDate: "2021-12",
-      current: false,
-      description: "Developed responsive web applications using React and TypeScript. Collaborated with designers to implement pixel-perfect UIs."
-    }
-  ],
-  skills: [
-    { id: 1, name: "JavaScript", level: "Expert", category: "Frontend" },
-    { id: 2, name: "React", level: "Expert", category: "Frontend" },
-    { id: 3, name: "TypeScript", level: "Advanced", category: "Frontend" },
-    { id: 4, name: "Node.js", level: "Advanced", category: "Backend" },
-    { id: 5, name: "Python", level: "Intermediate", category: "Backend" },
-    { id: 6, name: "PostgreSQL", level: "Advanced", category: "Database" },
-    { id: 7, name: "AWS", level: "Intermediate", category: "Cloud" },
-    { id: 8, name: "Docker", level: "Intermediate", category: "DevOps" }
-  ],
-  projects: [
-    {
-      id: 1,
-      name: "E-Commerce Platform",
-      description: "Full-stack e-commerce solution with React frontend, Node.js backend, and Stripe integration. Features include user authentication, product management, and order processing.",
-      tech: "React, Node.js, MongoDB, Stripe, AWS",
-      link: "https://ecommerce-demo.com",
-      github: "https://github.com/johndoe/ecommerce-platform",
-      featured: true
-    },
-    {
-      id: 2,
-      name: "Task Management App",
-      description: "Collaborative task management application with real-time updates, file sharing, and team collaboration features.",
-      tech: "Vue.js, Express, Socket.io, PostgreSQL",
-      link: "https://taskapp-demo.com",
-      github: "https://github.com/johndoe/task-manager"
-    },
-    {
-      id: 3,
-      name: "Weather Analytics Dashboard",
-      description: "Data visualization dashboard showing weather patterns and analytics using D3.js and external APIs.",
-      tech: "React, D3.js, Python, FastAPI",
-      link: "https://weather-dashboard.com",
-      github: "https://github.com/johndoe/weather-dashboard"
-    }
-  ],
-  education: [
-    {
-      id: 1,
-      degree: "Bachelor of Science in Computer Science",
-      school: "University of California, Berkeley",
-      year: "2019",
-      details: "Graduated Magna Cum Laude. Relevant coursework: Data Structures, Algorithms, Software Engineering."
-    }
-  ]
-})
 
-const useTemplateStore = () => ({
-  selectedTemplate: {
-    id: 'modern-professional',
-    name: 'Modern Professional',
-    style: 'modern'
+// Enhanced Portfolio Store with better data structure
+const usePortfolioStore = () => {
+  const [data, setData] = useState({
+    personalInfo: {
+      fullName: "John Doe",
+      professionalTitle: "Full-Stack Developer",
+      email: "john.doe@example.com",
+      phone: "+1 (555) 123-4567",
+      location: "San Francisco, CA",
+      website: "johndoe.dev",
+      bio: "Passionate full-stack developer with 5+ years of experience creating scalable web applications. I love turning complex problems into simple, beautiful solutions that users enjoy.",
+      profileImage: "/api/placeholder/200/200"
+    },
+    experience: [
+      {
+        id: "1",
+        position: "Senior Full-Stack Developer",
+        company: "TechCorp Solutions",
+        location: "San Francisco, CA",
+        startDate: "2022-01",
+        endDate: null,
+        current: true,
+        description: "Led development of microservices architecture serving 1M+ users. Built React frontends and Node.js backends, improved performance by 40%."
+      },
+      {
+        id: "2",
+        position: "Frontend Developer",
+        company: "StartupXYZ",
+        location: "Remote",
+        startDate: "2020-06",
+        endDate: "2021-12",
+        current: false,
+        description: "Developed responsive web applications using React and TypeScript. Collaborated with designers to implement pixel-perfect UIs."
+      }
+    ],
+    skills: [
+      { id: "1", name: "JavaScript", level: "Expert", category: "Frontend" },
+      { id: "2", name: "React", level: "Expert", category: "Frontend" },
+      { id: "3", name: "TypeScript", level: "Advanced", category: "Frontend" },
+      { id: "4", name: "Node.js", level: "Advanced", category: "Backend" },
+      { id: "5", name: "Python", level: "Intermediate", category: "Backend" },
+      { id: "6", name: "PostgreSQL", level: "Advanced", category: "Database" },
+      { id: "7", name: "AWS", level: "Intermediate", category: "Cloud" },
+      { id: "8", name: "Docker", level: "Intermediate", category: "DevOps" }
+    ],
+    projects: [
+      {
+        id: "1",
+        name: "E-Commerce Platform",
+        description: "Full-stack e-commerce solution with React frontend, Node.js backend, and Stripe integration. Features include user authentication, product management, and order processing.",
+        tech: "React, Node.js, MongoDB, Stripe, AWS",
+        link: "https://ecommerce-demo.com",
+        github: "https://github.com/johndoe/ecommerce-platform",
+        featured: true,
+        images: [
+          "/api/placeholder/400/300",
+          "/api/placeholder/400/300",
+          "/api/placeholder/400/300"
+        ],
+        thumbnail: "/api/placeholder/400/300"
+      },
+      {
+        id: "2",
+        name: "Task Management App",
+        description: "Collaborative task management application with real-time updates, file sharing, and team collaboration features.",
+        tech: "Vue.js, Express, Socket.io, PostgreSQL",
+        link: "https://taskapp-demo.com",
+        github: "https://github.com/johndoe/task-manager",
+        images: [
+          "/api/placeholder/400/300",
+          "/api/placeholder/400/300"
+        ],
+        thumbnail: "/api/placeholder/400/300"
+      },
+      {
+        id: "3",
+        name: "Weather Analytics Dashboard",
+        description: "Data visualization dashboard showing weather patterns and analytics using D3.js and external APIs.",
+        tech: "React, D3.js, Python, FastAPI",
+        link: "https://weather-dashboard.com",
+        github: "https://github.com/johndoe/weather-dashboard",
+        images: ["/api/placeholder/400/300"],
+        thumbnail: "/api/placeholder/400/300"
+      }
+    ],
+    education: [
+      {
+        id: "1",
+        degree: "Bachelor of Science in Computer Science",
+        school: "University of California, Berkeley",
+        year: "2019",
+        details: "Graduated Magna Cum Laude. Relevant coursework: Data Structures, Algorithms, Software Engineering."
+      }
+    ]
+  })
+  
+  const [hasChanges, setHasChanges] = useState(false)
+
+  const updatePersonalInfo = (info) => {
+    setData(prev => ({ ...prev, personalInfo: { ...prev.personalInfo, ...info } }))
+    setHasChanges(true)
   }
-})
+
+  const addExperience = (experience) => {
+    const newExp = { ...experience, id: Date.now().toString() }
+    setData(prev => ({ ...prev, experience: [...prev.experience, newExp] }))
+    setHasChanges(true)
+  }
+
+  const updateExperience = (id, updates) => {
+    setData(prev => ({
+      ...prev,
+      experience: prev.experience.map(exp => exp.id === id ? { ...exp, ...updates } : exp)
+    }))
+    setHasChanges(true)
+  }
+
+  const removeExperience = (id) => {
+    setData(prev => ({ ...prev, experience: prev.experience.filter(exp => exp.id !== id) }))
+    setHasChanges(true)
+  }
+
+  const addSkill = (skill) => {
+    const newSkill = { ...skill, id: Date.now().toString() }
+    setData(prev => ({ ...prev, skills: [...prev.skills, newSkill] }))
+    setHasChanges(true)
+  }
+
+  const updateSkill = (id, updates) => {
+    setData(prev => ({
+      ...prev,
+      skills: prev.skills.map(skill => skill.id === id ? { ...skill, ...updates } : skill)
+    }))
+    setHasChanges(true)
+  }
+
+  const removeSkill = (id) => {
+    setData(prev => ({ ...prev, skills: prev.skills.filter(skill => skill.id !== id) }))
+    setHasChanges(true)
+  }
+
+  const addProject = (project) => {
+    const newProject = { ...project, id: Date.now().toString() }
+    setData(prev => ({ ...prev, projects: [...prev.projects, newProject] }))
+    setHasChanges(true)
+  }
+
+  const updateProject = (id, updates) => {
+    setData(prev => ({
+      ...prev,
+      projects: prev.projects.map(project => project.id === id ? { ...project, ...updates } : project)
+    }))
+    setHasChanges(true)
+  }
+
+  const removeProject = (id) => {
+    setData(prev => ({ ...prev, projects: prev.projects.filter(project => project.id !== id) }))
+    setHasChanges(true)
+  }
+
+  const addEducation = (education) => {
+    const newEdu = { ...education, id: Date.now().toString() }
+    setData(prev => ({ ...prev, education: [...prev.education, newEdu] }))
+    setHasChanges(true)
+  }
+
+  const updateEducation = (id, updates) => {
+    setData(prev => ({
+      ...prev,
+      education: prev.education.map(edu => edu.id === id ? { ...edu, ...updates } : edu)
+    }))
+    setHasChanges(true)
+  }
+
+  const removeEducation = (id) => {
+    setData(prev => ({ ...prev, education: prev.education.filter(edu => edu.id !== id) }))
+    setHasChanges(true)
+  }
+
+  const clearAll = () => {
+    setData({
+      personalInfo: { fullName: "", professionalTitle: "", email: "", phone: "", location: "", website: "", bio: "" },
+      experience: [],
+      skills: [],
+      projects: [],
+      education: []
+    })
+    setHasChanges(true)
+  }
+
+  const saveChanges = () => {
+    setHasChanges(false)
+    // Here you would typically save to backend
+  }
+
+  return {
+    ...data,
+    hasChanges,
+    updatePersonalInfo,
+    addExperience,
+    updateExperience,
+    removeExperience,
+    addSkill,
+    updateSkill,
+    removeSkill,
+    addProject,
+    updateProject,
+    removeProject,
+    addEducation,
+    updateEducation,
+    removeEducation,
+    clearAll,
+    saveChanges
+  }
+}
+
+// Personal Info Form Component
+const PersonalInfoForm = ({ personalInfo, updatePersonalInfo }) => {
+  const [formData, setFormData] = useState(personalInfo)
+
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    updatePersonalInfo({ [field]: value })
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <User className="h-5 w-5 mr-2 text-blue-600" />
+          Personal Information
+        </h3>
+        
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+              <input
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => handleChange('fullName', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="John Doe"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Professional Title *</label>
+              <input
+                type="text"
+                value={formData.professionalTitle}
+                onChange={(e) => handleChange('professionalTitle', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Full-Stack Developer"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="john@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="+1 (555) 123-4567"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={(e) => handleChange('location', e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="San Francisco, CA"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) => handleChange('bio', e.target.value)}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              placeholder="Tell us about yourself..."
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Experience Form Component  
+const ExperienceForm = ({ experience, addExperience, updateExperience, removeExperience }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [formData, setFormData] = useState({
+    position: '',
+    company: '',
+    location: '',
+    startDate: '',
+    endDate: '',
+    current: false,
+    description: ''
+  })
+
+  const openModal = (exp = null) => {
+    if (exp) {
+      setFormData(exp)
+      setEditingId(exp.id)
+    } else {
+      setFormData({
+        position: '',
+        company: '',
+        location: '',
+        startDate: '',
+        endDate: '',
+        current: false,
+        description: ''
+      })
+      setEditingId(null)
+    }
+    setIsModalOpen(true)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (editingId) {
+      updateExperience(editingId, formData)
+    } else {
+      addExperience(formData)
+    }
+    setIsModalOpen(false)
+  }
+
+  const formatDate = (dateString) => {
+    if (!dateString) return ''
+    return new Date(dateString + '-01').toLocaleDateString('en-US', { 
+      month: 'short', 
+      year: 'numeric' 
+    })
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <Briefcase className="h-5 w-5 mr-2 text-blue-600" />
+          Work Experience
+        </h3>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Experience</span>
+        </button>
+      </div>
+
+      {/* Experience Cards */}
+      <div className="space-y-4">
+        {experience.map((exp) => (
+          <div key={exp.id} className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-2">
+                  <Building className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900">{exp.position}</h4>
+                    <p className="text-blue-600 font-medium">{exp.company}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-4 mb-3 text-sm text-gray-600">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="h-4 w-4" />
+                    <span>{formatDate(exp.startDate)} - {exp.current ? 'Present' : formatDate(exp.endDate)}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{exp.location}</span>
+                  </div>
+                  {exp.current && (
+                    <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Current</span>
+                  )}
+                </div>
+                
+                <p className="text-gray-700 text-sm leading-relaxed">{exp.description}</p>
+              </div>
+              
+              <div className="flex items-center space-x-2 ml-4">
+                <button
+                  onClick={() => openModal(exp)}
+                  className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeExperience(exp.id)}
+                  className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">
+                  {editingId ? 'Edit Experience' : 'Add Experience'}
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Position *</label>
+                    <input
+                      type="text"
+                      value={formData.position}
+                      onChange={(e) => setFormData({...formData, position: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Company *</label>
+                    <input
+                      type="text"
+                      value={formData.company}
+                      onChange={(e) => setFormData({...formData, company: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                  <input
+                    type="text"
+                    value={formData.location}
+                    onChange={(e) => setFormData({...formData, location: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
+                    <input
+                      type="month"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                    <input
+                      type="month"
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      disabled={formData.current}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="current"
+                    checked={formData.current}
+                    onChange={(e) => setFormData({...formData, current: e.target.checked, endDate: e.target.checked ? '' : formData.endDate})}
+                    className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                  />
+                  <label htmlFor="current" className="ml-2 text-sm text-gray-700">I currently work here</label>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {editingId ? 'Update' : 'Add'} Experience
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Skills Form Component
+const SkillsForm = ({ skills, addSkill, updateSkill, removeSkill }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [formData, setFormData] = useState({
+    name: '',
+    level: 'Intermediate',
+    category: 'Frontend'
+  })
+
+  const skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert']
+  const categories = ['Frontend', 'Backend', 'Database', 'Cloud', 'DevOps', 'Mobile', 'Other']
+
+  const openModal = (skill = null) => {
+    if (skill) {
+      setFormData(skill)
+      setEditingId(skill.id)
+    } else {
+      setFormData({
+        name: '',
+        level: 'Intermediate',
+        category: 'Frontend'
+      })
+      setEditingId(null)
+    }
+    setIsModalOpen(true)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (editingId) {
+      updateSkill(editingId, formData)
+    } else {
+      addSkill(formData)
+    }
+    setIsModalOpen(false)
+  }
+
+  const getLevelColor = (level) => {
+    const colors = {
+      'Beginner': 'bg-red-100 text-red-800',
+      'Intermediate': 'bg-yellow-100 text-yellow-800',
+      'Advanced': 'bg-blue-100 text-blue-800',
+      'Expert': 'bg-green-100 text-green-800'
+    }
+    return colors[level] || 'bg-gray-100 text-gray-800'
+  }
+
+  const groupedSkills = skills.reduce((acc, skill) => {
+    const category = skill.category || 'Other'
+    if (!acc[category]) acc[category] = []
+    acc[category].push(skill)
+    return acc
+  }, {})
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <Code2 className="h-5 w-5 mr-2 text-blue-600" />
+          Skills & Expertise
+        </h3>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Skill</span>
+        </button>
+      </div>
+
+      {/* Skills by Category */}
+      <div className="space-y-6">
+        {Object.entries(groupedSkills).map(([category, categorySkills]) => (
+          <div key={category} className="bg-white p-6 rounded-xl border border-gray-200">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <TrendingUp className="h-5 w-5 mr-2 text-blue-600" />
+              {category}
+              <span className="ml-2 text-sm font-normal text-gray-500">
+                ({categorySkills.length} skills)
+              </span>
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categorySkills.map((skill) => (
+                <div key={skill.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-start justify-between mb-2">
+                    <h5 className="font-medium text-gray-900">{skill.name}</h5>
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={() => openModal(skill)}
+                        className="p-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </button>
+                      <button
+                        onClick={() => removeSkill(skill.id)}
+                        className="p-1 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs px-2 py-1 rounded-full ${getLevelColor(skill.level)}`}>
+                      {skill.level}
+                    </span>
+                    
+                    <div className="flex items-center space-x-1">
+                      {Array.from({ length: 4 }).map((_, index) => {
+                        const levels = ['Beginner', 'Intermediate', 'Advanced', 'Expert']
+                        const currentLevelIndex = levels.indexOf(skill.level)
+                        const isActive = index <= currentLevelIndex
+                        
+                        return (
+                          <Star
+                            key={index}
+                            className={`h-3 w-3 ${isActive ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                          />
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">
+                  {editingId ? 'Edit Skill' : 'Add Skill'}
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Skill Name *</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="JavaScript, React, Python..."
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Level *</label>
+                    <select
+                      value={formData.level}
+                      onChange={(e) => setFormData({...formData, level: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      {skillLevels.map(level => (
+                        <option key={level} value={level}>{level}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      {categories.map(category => (
+                        <option key={category} value={category}>{category}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {editingId ? 'Update' : 'Add'} Skill
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Image Upload Component
+const ImageUploader = ({ images, onImagesChange, maxImages = 4 }) => {
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef(null)
+
+  const handleFileSelect = async (e) => {
+    const files = Array.from(e.target.files)
+    if (files.length === 0) return
+
+    setUploading(true)
+    
+    // Simulate file upload - In real app, upload to server
+    const newImages = await Promise.all(
+      files.slice(0, maxImages - images.length).map(async (file) => {
+        return new Promise(resolve => {
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            resolve({
+              id: Date.now() + Math.random(),
+              url: e.target.result,
+              name: file.name
+            })
+          }
+          reader.readAsDataURL(file)
+        })
+      })
+    )
+
+    onImagesChange([...images, ...newImages])
+    setUploading(false)
+  }
+
+  const removeImage = (imageId) => {
+    onImagesChange(images.filter(img => img.id !== imageId))
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <label className="block text-sm font-medium text-gray-700">
+          Project Images ({images.length}/{maxImages})
+        </label>
+        {images.length < maxImages && (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center space-x-2 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 disabled:opacity-50"
+          >
+            {uploading ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            <span>{uploading ? 'Uploading...' : 'Add Images'}</span>
+          </button>
+        )}
+      </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
+      {images.length > 0 && (
+        <div className="grid grid-cols-2 gap-3">
+          {images.map((image, index) => (
+            <div key={image.id} className="relative group">
+              <img
+                src={image.url}
+                alt={`Project image ${index + 1}`}
+                className="w-full h-32 object-cover rounded-lg border border-gray-200"
+              />
+              <button
+                type="button"
+                onClick={() => removeImage(image.id)}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {images.length === 0 && (
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 mb-2">No images uploaded yet</p>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+          >
+            Click to upload images
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Projects Form Component
+const ProjectsForm = ({ projects, addProject, updateProject, removeProject }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState({})
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    tech: '',
+    link: '',
+    github: '',
+    images: [],
+    thumbnail: ''
+  })
+
+  const openModal = (project = null) => {
+    if (project) {
+      setFormData({
+        ...project,
+        images: project.images?.map((url, index) => ({ id: index, url, name: `image-${index}` })) || []
+      })
+      setEditingId(project.id)
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        tech: '',
+        link: '',
+        github: '',
+        images: [],
+        thumbnail: ''
+      })
+      setEditingId(null)
+    }
+    setIsModalOpen(true)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const projectData = {
+      ...formData,
+      images: formData.images.map(img => img.url),
+      thumbnail: formData.images[0]?.url || ''
+    }
+    
+    if (editingId) {
+      updateProject(editingId, projectData)
+    } else {
+      addProject(projectData)
+    }
+    setIsModalOpen(false)
+  }
+
+  const nextImage = (projectId) => {
+    const project = projects.find(p => p.id === projectId)
+    if (!project?.images?.length) return
+    
+    setCurrentImageIndex(prev => ({
+      ...prev,
+      [projectId]: ((prev[projectId] || 0) + 1) % project.images.length
+    }))
+  }
+
+  const prevImage = (projectId) => {
+    const project = projects.find(p => p.id === projectId)
+    if (!project?.images?.length) return
+    
+    setCurrentImageIndex(prev => ({
+      ...prev,
+      [projectId]: ((prev[projectId] || 0) - 1 + project.images.length) % project.images.length
+    }))
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <FolderOpen className="h-5 w-5 mr-2 text-blue-600" />
+          Projects
+        </h3>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Project</span>
+        </button>
+      </div>
+
+      {/* Projects Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {projects.map((project) => (
+          <div key={project.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+            {/* Image Section */}
+            {project.images && project.images.length > 0 && (
+              <div className="relative h-48 bg-gray-100">
+                <img
+                  src={project.images[currentImageIndex[project.id] || 0]}
+                  alt={project.name}
+                  className="w-full h-full object-cover"
+                />
+                
+                {project.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => prevImage(project.id)}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => nextImage(project.id)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                    
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
+                      {project.images.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            index === (currentImageIndex[project.id] || 0) 
+                              ? 'bg-white' 
+                              : 'bg-white bg-opacity-50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+                
+                <div className="absolute top-2 right-2 flex items-center space-x-2">
+                  <button
+                    onClick={() => openModal(project)}
+                    className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => removeProject(project.id)}
+                    className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Content Section */}
+            <div className="p-6">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">{project.name}</h4>
+              <p className="text-gray-700 text-sm mb-4 leading-relaxed line-clamp-3">{project.description}</p>
+
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2">
+                  {project.tech.split(',').map((tech, index) => (
+                    <span
+                      key={index}
+                      className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
+                    >
+                      {tech.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-sm"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    <span>Live Demo</span>
+                  </a>
+                )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1 text-gray-600 hover:text-gray-700 text-sm"
+                  >
+                    <Github className="h-4 w-4" />
+                    <span>Source Code</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">
+                  {editingId ? 'Edit Project' : 'Add Project'}
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column - Form Fields */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="My Awesome Project"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                        placeholder="Describe what this project does, the problem it solves..."
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Technologies *</label>
+                      <input
+                        type="text"
+                        value={formData.tech}
+                        onChange={(e) => setFormData({...formData, tech: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="React, Node.js, TypeScript..."
+                        required
+                      />
+                      <p className="text-gray-500 text-xs mt-1">Separate with commas</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Live Demo URL</label>
+                        <input
+                          type="url"
+                          value={formData.link}
+                          onChange={(e) => setFormData({...formData, link: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="https://myproject.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">GitHub Repository</label>
+                        <input
+                          type="url"
+                          value={formData.github}
+                          onChange={(e) => setFormData({...formData, github: e.target.value})}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="https://github.com/username/project"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column - Image Upload */}
+                  <div>
+                    <ImageUploader 
+                      images={formData.images}
+                      onImagesChange={(images) => setFormData({...formData, images})}
+                      maxImages={4}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {editingId ? 'Update' : 'Add'} Project
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Education Form Component
+const EducationForm = ({ education, addEducation, updateEducation, removeEducation }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [formData, setFormData] = useState({
+    degree: '',
+    school: '',
+    year: '',
+    details: ''
+  })
+
+  const openModal = (edu = null) => {
+    if (edu) {
+      setFormData(edu)
+      setEditingId(edu.id)
+    } else {
+      setFormData({
+        degree: '',
+        school: '',
+        year: '',
+        details: ''
+      })
+      setEditingId(null)
+    }
+    setIsModalOpen(true)
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (editingId) {
+      updateEducation(editingId, formData)
+    } else {
+      addEducation(formData)
+    }
+    setIsModalOpen(false)
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <GraduationCap className="h-5 w-5 mr-2 text-blue-600" />
+          Education
+        </h3>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Add Education</span>
+        </button>
+      </div>
+
+      {/* Education Cards */}
+      <div className="space-y-4">
+        {education.map((edu) => (
+          <div key={edu.id} className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-lg transition-shadow">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-2">
+                  <School className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900">{edu.degree}</h4>
+                    <p className="text-blue-600 font-medium">{edu.school}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 mb-3">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">{edu.year}</span>
+                </div>
+                
+                {edu.details && (
+                  <p className="text-gray-700 text-sm leading-relaxed">{edu.details}</p>
+                )}
+              </div>
+              
+              <div className="flex items-center space-x-2 ml-4">
+                <button
+                  onClick={() => openModal(edu)}
+                  className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeEducation(edu.id)}
+                  className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold">
+                  {editingId ? 'Edit Education' : 'Add Education'}
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Degree *</label>
+                    <input
+                      type="text"
+                      value={formData.degree}
+                      onChange={(e) => setFormData({...formData, degree: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Bachelor of Science in Computer Science"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Institution *</label>
+                    <input
+                      type="text"
+                      value={formData.school}
+                      onChange={(e) => setFormData({...formData, school: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="University of California, Berkeley"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Year of Graduation *</label>
+                  <input
+                    type="text"
+                    value={formData.year}
+                    onChange={(e) => setFormData({...formData, year: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="2023"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
+                  <textarea
+                    value={formData.details}
+                    onChange={(e) => setFormData({...formData, details: e.target.value})}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                    placeholder="GPA, honors, relevant coursework..."
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    {editingId ? 'Update' : 'Add'} Education
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Contact Form Component
+const ContactForm = ({ personalInfo, updatePersonalInfo }) => {
+  return (
+    <div className="space-y-6">
+      <div className="bg-white p-6 rounded-xl border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Mail className="h-5 w-5 mr-2 text-blue-600" />
+          Contact Information
+        </h3>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input
+              type="email"
+              value={personalInfo.email || ''}
+              onChange={(e) => updatePersonalInfo({ email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+            <input
+              type="tel"
+              value={personalInfo.phone || ''}
+              onChange={(e) => updatePersonalInfo({ phone: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
+            <input
+              type="url"
+              value={personalInfo.website || ''}
+              onChange={(e) => updatePersonalInfo({ website: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const EnhancedPortfolioBuilder = () => {
   const portfolioData = usePortfolioStore()
-  const { selectedTemplate } = useTemplateStore()
   
   // Sidebar states
   const [iconSidebarVisible, setIconSidebarVisible] = useState(true)
@@ -191,7 +1516,7 @@ const EnhancedPortfolioBuilder = () => {
     }
   }
 
-  // Generate beautiful default template
+  // Generate enhanced HTML with project images and carousel
   const generateHTML = () => {
     const { personalInfo, experience, skills, projects, education } = portfolioData
     
@@ -434,10 +1759,10 @@ const EnhancedPortfolioBuilder = () => {
         .level-intermediate { background: #fef3c7; color: #92400e; }
         .level-beginner { background: #fee2e2; color: #dc2626; }
         
-        /* Projects Grid */
+        /* Projects Grid with Enhanced Image Display */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 2rem;
         }
         
@@ -455,21 +1780,91 @@ const EnhancedPortfolioBuilder = () => {
             box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
         
-        .project-header {
-            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
-            padding: 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
+        /* Project Image Carousel */
+        .project-image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+        
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+        
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            opacity: 0;
+            z-index: 2;
+        }
+        
+        .project-image-container:hover .carousel-button {
+            opacity: 1;
+        }
+        
+        .carousel-button:hover {
+            background: rgba(0,0,0,0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-prev {
+            left: 10px;
+        }
+        
+        .carousel-next {
+            right: 10px;
+        }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+        
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .carousel-dot.active {
+            background: white;
+            transform: scale(1.2);
         }
         
         .project-content {
-            padding: 1.5rem;
+            padding: 2rem;
         }
         
         .project-title {
             font-size: 1.3rem;
             font-weight: 600;
             color: #1e293b;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .project-description {
@@ -626,12 +2021,27 @@ const EnhancedPortfolioBuilder = () => {
             <section class="section">
                 <h2 class="section-title">Featured Projects</h2>
                 <div class="projects-grid">
-                    ${projects.map(project => `
+                    ${projects.map((project, index) => `
                         <div class="project-card">
-                            <div class="project-header">
-                                <div class="project-title">${project.name}</div>
-                            </div>
+                            ${project.images && project.images.length > 0 ? `
+                                <div class="project-image-container">
+                                    <img src="${project.images[0]}" alt="${project.name}" class="project-image" id="project-img-${index}">
+                                    
+                                    ${project.images.length > 1 ? `
+                                        <button class="carousel-button carousel-prev" onclick="prevImage(${index})" aria-label="Previous image">❮</button>
+                                        <button class="carousel-button carousel-next" onclick="nextImage(${index})" aria-label="Next image">❯</button>
+                                        
+                                        <div class="carousel-dots">
+                                            ${project.images.map((_, dotIndex) => `
+                                                <div class="carousel-dot ${dotIndex === 0 ? 'active' : ''}" onclick="showImage(${index}, ${dotIndex})"></div>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            
                             <div class="project-content">
+                                <div class="project-title">${project.name}</div>
                                 <div class="project-description">${project.description}</div>
                                 <div class="tech-stack">
                                     ${project.tech.split(',').map(tech => `
@@ -663,6 +2073,43 @@ const EnhancedPortfolioBuilder = () => {
     </div>
 
     <script>
+        // Project image carousel functionality
+        const projectImages = ${JSON.stringify(projects.map(p => p.images || []))};
+        let currentImageIndices = ${JSON.stringify(projects.map(() => 0))};
+
+        function showImage(projectIndex, imageIndex) {
+            const images = projectImages[projectIndex];
+            if (!images || imageIndex >= images.length) return;
+
+            currentImageIndices[projectIndex] = imageIndex;
+            const imgElement = document.getElementById('project-img-' + projectIndex);
+            if (imgElement) {
+                imgElement.src = images[imageIndex];
+            }
+
+            // Update dots
+            const dots = document.querySelectorAll('.project-card:nth-child(' + (projectIndex + 1) + ') .carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === imageIndex);
+            });
+        }
+
+        function nextImage(projectIndex) {
+            const images = projectImages[projectIndex];
+            if (!images || images.length <= 1) return;
+
+            const nextIndex = (currentImageIndices[projectIndex] + 1) % images.length;
+            showImage(projectIndex, nextIndex);
+        }
+
+        function prevImage(projectIndex) {
+            const images = projectImages[projectIndex];
+            if (!images || images.length <= 1) return;
+
+            const prevIndex = (currentImageIndices[projectIndex] - 1 + images.length) % images.length;
+            showImage(projectIndex, prevIndex);
+        }
+
         function formatDate(dateString) {
             if (!dateString) return ''
             return new Date(dateString + '-01').toLocaleDateString('en-US', { 
@@ -728,10 +2175,34 @@ const EnhancedPortfolioBuilder = () => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <button className="flex items-center space-x-2 px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <Save className="h-4 w-4" />
-              <span>Save</span>
+            {portfolioData.hasChanges && (
+              <div className="flex items-center space-x-2 px-3 py-1.5 bg-amber-100 text-amber-800 rounded-lg text-sm">
+                <AlertCircle className="h-4 w-4" />
+                <span>Unsaved changes</span>
+              </div>
+            )}
+            
+            <button
+              onClick={portfolioData.clearAll}
+              className="flex items-center space-x-2 px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Clear All</span>
             </button>
+            
+            <button
+              onClick={portfolioData.saveChanges}
+              disabled={!portfolioData.hasChanges}
+              className={`flex items-center space-x-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                portfolioData.hasChanges
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <Save className="h-4 w-4" />
+              <span>Save Changes</span>
+            </button>
+            
             <button className="flex items-center space-x-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
               <Download className="h-4 w-4" />
               <span>Download</span>
@@ -805,12 +2276,50 @@ const EnhancedPortfolioBuilder = () => {
 
             <div className="flex-1 overflow-y-auto p-4">
               {/* Render the appropriate form component */}
-              {activeForm === 'personal' && <PersonalInfoForm />}
-              {activeForm === 'experience' && <ExperienceForm />}
-              {activeForm === 'education' && <EducationForm />}
-              {activeForm === 'skills' && <SkillsForm />}
-              {activeForm === 'projects' && <ProjectsForm />}
-              {activeForm === 'contact' && <ContactForm />}
+              {activeForm === 'personal' && (
+                <PersonalInfoForm 
+                  personalInfo={portfolioData.personalInfo} 
+                  updatePersonalInfo={portfolioData.updatePersonalInfo}
+                />
+              )}
+              {activeForm === 'experience' && (
+                <ExperienceForm 
+                  experience={portfolioData.experience}
+                  addExperience={portfolioData.addExperience}
+                  updateExperience={portfolioData.updateExperience}
+                  removeExperience={portfolioData.removeExperience}
+                />
+              )}
+              {activeForm === 'education' && (
+                <EducationForm 
+                  education={portfolioData.education}
+                  addEducation={portfolioData.addEducation}
+                  updateEducation={portfolioData.updateEducation}
+                  removeEducation={portfolioData.removeEducation}
+                />
+              )}
+              {activeForm === 'skills' && (
+                <SkillsForm 
+                  skills={portfolioData.skills}
+                  addSkill={portfolioData.addSkill}
+                  updateSkill={portfolioData.updateSkill}
+                  removeSkill={portfolioData.removeSkill}
+                />
+              )}
+              {activeForm === 'projects' && (
+                <ProjectsForm 
+                  projects={portfolioData.projects}
+                  addProject={portfolioData.addProject}
+                  updateProject={portfolioData.updateProject}
+                  removeProject={portfolioData.removeProject}
+                />
+              )}
+              {activeForm === 'contact' && (
+                <ContactForm 
+                  personalInfo={portfolioData.personalInfo}
+                  updatePersonalInfo={portfolioData.updatePersonalInfo}
+                />
+              )}
             </div>
           </div>
 
@@ -890,15 +2399,17 @@ const EnhancedPortfolioBuilder = () => {
           <div className="bg-white border-t border-gray-200 px-4 py-2">
             <div className="flex items-center justify-between text-xs text-gray-500">
               <div className="flex items-center space-x-4">
-                <span>Template: {selectedTemplate?.name || 'Modern Professional'}</span>
+                <span>Template: Modern Professional</span>
                 <span>Mode: {previewMode}</span>
                 {formSidebarVisible && (
                   <span>Sidebar: {formSidebarWidth}px</span>
                 )}
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-green-600">Live Preview Active</span>
+                <div className={`w-2 h-2 rounded-full ${portfolioData.hasChanges ? 'bg-amber-500' : 'bg-green-500'}`}></div>
+                <span className={portfolioData.hasChanges ? 'text-amber-600' : 'text-green-600'}>
+                  {portfolioData.hasChanges ? 'Changes Pending' : 'All Saved'}
+                </span>
               </div>
             </div>
           </div>

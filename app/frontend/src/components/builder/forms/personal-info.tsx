@@ -3,8 +3,6 @@
 
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { User, Mail, Phone, MapPin, FileText } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -12,9 +10,15 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { usePortfolioStore } from '@/store/portfolio-store'
 import { useDebounce } from '@/hooks/use-debounce'
-import { personalInfoSchema } from '@/lib/validation'
 
-type PersonalInfoFormData = z.infer<typeof personalInfoSchema>
+interface PersonalInfoFormData {
+  fullName: string
+  professionalTitle: string
+  email: string
+  phone?: string
+  location?: string
+  bio?: string
+}
 
 export const PersonalInfoForm: React.FC = () => {
   const { personalInfo, setPersonalInfo } = usePortfolioStore()
@@ -26,8 +30,14 @@ export const PersonalInfoForm: React.FC = () => {
     formState: { errors },
     setValue
   } = useForm<PersonalInfoFormData>({
-    resolver: zodResolver(personalInfoSchema),
-    defaultValues: personalInfo || {}
+    defaultValues: {
+      fullName: personalInfo?.fullName || '',
+      professionalTitle: personalInfo?.professionalTitle || '',
+      email: personalInfo?.email || '',
+      phone: personalInfo?.phone || '',
+      location: personalInfo?.location || '',
+      bio: personalInfo?.bio || ''
+    }
   })
 
   const watchedValues = watch()
@@ -36,16 +46,26 @@ export const PersonalInfoForm: React.FC = () => {
   // Auto-save on change
   useEffect(() => {
     if (debouncedValues.fullName && debouncedValues.email && debouncedValues.professionalTitle) {
-      setPersonalInfo(debouncedValues)
+      setPersonalInfo({
+        fullName: debouncedValues.fullName,
+        professionalTitle: debouncedValues.professionalTitle,
+        email: debouncedValues.email,
+        phone: debouncedValues.phone || '',
+        location: debouncedValues.location || '',
+        bio: debouncedValues.bio || ''
+      })
     }
   }, [debouncedValues, setPersonalInfo])
 
   // Set initial values when personalInfo exists
   useEffect(() => {
     if (personalInfo) {
-      Object.entries(personalInfo).forEach(([key, value]) => {
-        setValue(key as keyof PersonalInfoFormData, value || '')
-      })
+      setValue('fullName', personalInfo.fullName || '')
+      setValue('professionalTitle', personalInfo.professionalTitle || '')
+      setValue('email', personalInfo.email || '')
+      setValue('phone', personalInfo.phone || '')
+      setValue('location', personalInfo.location || '')
+      setValue('bio', personalInfo.bio || '')
     }
   }, [personalInfo, setValue])
 
@@ -71,7 +91,7 @@ export const PersonalInfoForm: React.FC = () => {
                   Full Name *
                 </label>
                 <Input
-                  {...register('fullName')}
+                  {...register('fullName', { required: 'Full name is required' })}
                   placeholder="John Doe"
                   error={!!errors.fullName}
                 />
@@ -85,7 +105,7 @@ export const PersonalInfoForm: React.FC = () => {
                   Professional Title *
                 </label>
                 <Input
-                  {...register('professionalTitle')}
+                  {...register('professionalTitle', { required: 'Professional title is required' })}
                   placeholder="Frontend Developer"
                   error={!!errors.professionalTitle}
                 />
@@ -109,7 +129,10 @@ export const PersonalInfoForm: React.FC = () => {
                   Email Address *
                 </label>
                 <Input
-                  {...register('email')}
+                  {...register('email', { 
+                    required: 'Email is required',
+                    pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
+                  })}
                   type="email"
                   placeholder="john@example.com"
                   error={!!errors.email}
@@ -232,7 +255,7 @@ export const PersonalInfoForm: React.FC = () => {
           <li>• Use your full professional name as it appears on LinkedIn</li>
           <li>• Your title should clearly describe what you do (e.g., Senior Frontend Developer)</li>
           <li>• Write your bio in first person and keep it concise but engaging</li>
-          <li>• Include location if youre open to local opportunities, or mention Remote if applicable</li>
+          <li>• Include location if you're open to local opportunities, or mention Remote if applicable</li>
         </ul>
       </Card>
     </div>

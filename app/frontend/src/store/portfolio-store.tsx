@@ -9,16 +9,29 @@ export interface PersonalInfo {
   email: string
   phone?: string
   location?: string
+  website?: string
   bio?: string
+  profileImage?: string
 }
 
 export interface Experience {
   id: string
   company: string
-  role: string
+  position: string
+  role?: string
+  location?: string
+  startDate?: string
+  endDate?: string | null
   duration: string
   description?: string
   current?: boolean
+}
+
+export interface ProjectImage {
+  id: string
+  url: string
+  fileName: string
+  isThumbnail: boolean
 }
 
 export interface Project {
@@ -28,12 +41,16 @@ export interface Project {
   tech: string
   link?: string
   github?: string
+  images?: ProjectImage[]
+  thumbnailId?: string | null
+  featured?: boolean
 }
 
 export interface Skill {
   id: string
+  name: string
+  level: string
   category: string
-  items: string[]
   proficiency?: number
 }
 

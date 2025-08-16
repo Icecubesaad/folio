@@ -1,7 +1,7 @@
 // src/components/builder/forms/education.tsx
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { GraduationCap, Plus, Edit, Trash2, Calendar, School } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -60,7 +60,15 @@ export const EducationForm: React.FC = () => {
   }
 
   const handleDelete = (id: string) => {
-    removeEducation(id)
+    if (confirm('Are you sure you want to delete this education entry?')) {
+      removeEducation(id)
+    }
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setEditingId(null)
+    reset()
   }
 
   return (
@@ -124,6 +132,7 @@ export const EducationForm: React.FC = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => openEditModal(edu.id)}
+                    className="hover:bg-blue-50 hover:text-blue-600"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -131,7 +140,7 @@ export const EducationForm: React.FC = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(edu.id)}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -145,14 +154,11 @@ export const EducationForm: React.FC = () => {
       {/* Add/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          reset()
-        }}
+        onClose={closeModal}
         title={editingId ? 'Edit Education' : 'Add Education'}
         size="lg"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -188,7 +194,13 @@ export const EducationForm: React.FC = () => {
               Year of Graduation *
             </label>
             <Input
-              {...register('year', { required: 'Year is required' })}
+              {...register('year', { 
+                required: 'Year is required',
+                pattern: {
+                  value: /^\d{4}$/,
+                  message: 'Please enter a valid 4-digit year'
+                }
+              })}
               placeholder="2023"
               error={!!errors.year}
             />
@@ -203,7 +215,7 @@ export const EducationForm: React.FC = () => {
             </label>
             <Textarea
               {...register('details')}
-              rows={3}
+              rows={4}
               placeholder="GPA, honors, relevant coursework, thesis topic, etc."
               className="resize-none"
             />
@@ -216,7 +228,7 @@ export const EducationForm: React.FC = () => {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsModalOpen(false)}
+              onClick={closeModal}
             >
               Cancel
             </Button>
@@ -232,10 +244,11 @@ export const EducationForm: React.FC = () => {
         <Card className="p-4 bg-indigo-50 border-indigo-200">
           <h4 className="font-medium text-indigo-900 mb-2">💡 Tips for Education Entries</h4>
           <ul className="text-sm text-indigo-800 space-y-1">
-            <li>• List education in reverse chronological order</li>
+            <li>• List education in reverse chronological order (most recent first)</li>
             <li>• Include relevant certifications and online courses</li>
-            <li>• Mention honors, awards, or high GPA if relevant</li>
+            <li>• Mention honors, awards, or high GPA if relevant (3.5+)</li>
             <li>• For recent graduates, include relevant coursework</li>
+            <li>• Add thesis or capstone project topics if applicable</li>
           </ul>
         </Card>
       )}
